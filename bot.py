@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 logging.basicConfig(level=logging.INFO)
 load_dotenv()
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-WEBAPP_URL = os.getenv("WEBAPP_URL")
+BOT_TOKEN = os.getenv("8859119831:AAFBBnqoZGOEBYtUcvf3xFMgk_ck1qXmzUg")
+WEBAPP_URL = os.getenv("http://t.me/Flagonbot/Osint")
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
