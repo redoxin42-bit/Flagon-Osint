@@ -15,6 +15,7 @@
             --glass-border: rgba(255, 255, 255, 0.08);
             --text-color: #f3f4f6;
             --text-muted: #9ca3af;
+            --success-color: #10b981;
         }
 
         * {
@@ -61,7 +62,6 @@
         .logo i {
             color: var(--accent-color);
             filter: drop-shadow(0 0 8px var(--accent-color));
-            transition: color 0.3s, filter 0.3s;
         }
 
         .color-picker-container {
@@ -83,18 +83,14 @@
             border: 2px solid rgba(0,0,0,0.3);
         }
 
-        .color-pill::after {
+        .color-pill.active { transform: scale(1.15); }
+        .color-pill.active::after {
             content: '';
             position: absolute;
             top: -5px; left: -5px; right: -5px; bottom: -5px;
-            border: 2px solid transparent;
+            border: 2px solid var(--accent-color);
             border-radius: 50%;
-            transition: border-color 0.3s, transform 0.3s;
-            transform: scale(0.8);
         }
-
-        .color-pill.active { transform: scale(1.15); }
-        .color-pill.active::after { border-color: var(--accent-color); transform: scale(1); }
 
         .pill-purple { background: #a855f7; }
         .pill-blue { background: #3b82f6; }
@@ -124,10 +120,8 @@
             border-radius: 24px;
             padding: 24px;
             box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
         }
 
-        /* Выбор типа пробива */
         .type-selector-label {
             font-size: 13px;
             color: var(--text-muted);
@@ -159,13 +153,10 @@
             transition: all 0.2s ease;
         }
 
-        .type-card i { font-size: 14px; width: 16px; text-align: center; }
-
         .type-card.active {
             background: rgba(255, 255, 255, 0.05);
             border-color: var(--accent-color);
             color: #fff;
-            box-shadow: inset 0 0 10px rgba(255,255,255,0.02);
         }
 
         .search-container {
@@ -175,12 +166,6 @@
             border-radius: 18px;
             padding: 6px;
             align-items: center;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .search-container:focus-within {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 15px var(--accent-glow);
         }
 
         .search-input {
@@ -201,13 +186,9 @@
             border-radius: 14px;
             color: white;
             cursor: pointer;
-            transition: transform 0.2s, background-color 0.3s, box-shadow 0.3s;
             box-shadow: 0 4px 10px var(--accent-glow);
         }
 
-        .search-btn:active { transform: scale(0.92); }
-
-        /* Обновленная сетка модулей */
         .services-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -223,7 +204,6 @@
             text-align: center;
             font-size: 12px;
             cursor: pointer;
-            transition: all 0.25s ease;
             color: var(--text-muted);
             display: flex;
             flex-direction: column;
@@ -231,17 +211,13 @@
             gap: 6px;
         }
 
-        .service-tag i { font-size: 16px; }
-
         .service-tag.selected {
             background: var(--accent-glow);
             border-color: var(--accent-color);
             color: #fff;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
         }
 
-        /* КАНВАС-ГРАФ ОБСИДИАНА (OBSIDIAN DATA CHAIN) */
+        /* КАНВАС-ГРАФ ОБСИДИАНА */
         .obsidian-container {
             display: none;
             flex-direction: column;
@@ -251,9 +227,8 @@
             background: rgba(10, 7, 20, 0.8);
             border-radius: 24px;
             border: 1px dashed var(--accent-color);
-            animation: fadeIn 0.4s ease forwards;
             overflow: hidden;
-            min-height: 320px;
+            min-height: 340px;
         }
 
         .graph-svg {
@@ -274,14 +249,9 @@
             position: relative;
             z-index: 2;
             backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             display: flex;
             align-items: center;
             gap: 8px;
-            max-width: 140px;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
         }
 
         .node-center {
@@ -289,20 +259,15 @@
             box-shadow: 0 0 20px var(--accent-glow);
             font-size: 14px;
             background: rgba(30, 20, 50, 0.8);
-            margin-bottom: 70px;
-            margin-top: 10px;
+            margin-bottom: 40px;
         }
 
         .nodes-orbit {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 30px 40px;
+            gap: 20px 40px;
             width: 100%;
             justify-items: center;
-        }
-
-        .node-child {
-            animation: pulseNode 2s infinite ease-in-out;
         }
 
         .node-child.active-scan {
@@ -311,65 +276,106 @@
             box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
         }
 
-        @keyframes pulseNode {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.04); }
+        .edge-line { stroke: rgba(255, 255, 255, 0.08); stroke-width: 1.5; }
+        .pulse-line { stroke: var(--accent-color); stroke-width: 2; stroke-dasharray: 8 20; animation: dash 1.5s linear infinite; }
+        @keyframes dash { to { stroke-dashoffset: -40; } }
+
+        /* КАРТОЧКА КРИМИНАЛЬНОГО ДОСЬЕ ЦЕЛИ (LIQUID GLASS) */
+        .dossier-wrapper {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+            animation: tabSlide 0.5s ease forwards;
         }
 
-        /* Анимация импульсных линий */
-        .edge-line {
-            stroke: rgba(255, 255, 255, 0.08);
-            stroke-width: 1.5;
+        .dossier-badge {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            align-self: flex-start;
         }
 
-        .pulse-line {
-            stroke: var(--accent-color);
-            stroke-width: 2;
-            stroke-dasharray: 8 20;
-            animation: dash 1.5s linear infinite;
+        .dossier-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        @keyframes dash {
-            to { stroke-dashoffset: -40; }
+        .dossier-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        /* Элементы Профиля */
+        .dossier-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+        }
+
+        .dossier-key {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dossier-val {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            text-align: right;
+        }
+
+        .relatives-box {
+            background: rgba(168, 85, 247, 0.04);
+            border: 1px dashed rgba(168, 85, 247, 0.3);
+            border-radius: 16px;
+            padding: 14px;
+            margin-top: 10px;
+        }
+
+        .relative-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .relative-item:last-child { border-none: none; }
+
+        /* Вкладки Профиля и остальное */
         .profile-header { display: flex; align-items: center; gap: 20px; }
         .profile-avatar {
             width: 75px; height: 75px; border-radius: 50%;
             border: 2px solid var(--accent-color); background: #201935;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 32px; object-fit: cover; box-shadow: 0 0 20px var(--accent-glow);
+            display: flex; align-items: center; justify-content: center; font-size: 32px;
         }
-        .profile-info h3 { font-size: 22px; margin-bottom: 4px; font-weight: 700; }
-        .profile-info p { color: var(--text-muted); font-size: 14px; }
-
         .stars-shop { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
         .star-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 16px; border-radius: 18px; }
-        .star-info { display: flex; align-items: center; gap: 12px; font-weight: 500; }
-        .star-info i { color: #facc15; font-size: 20px; filter: drop-shadow(0 0 5px rgba(250,204,21,0.4)); }
+        .star-btn { background: linear-gradient(135deg, #facc15, #eab308); color: #0d0914; border: none; padding: 10px 16px; border-radius: 12px; font-weight: 700; cursor: pointer; }
 
-        .star-btn {
-            background: linear-gradient(135deg, #facc15, #eab308); color: #0d0914; border: none;
-            padding: 10px 16px; border-radius: 12px; font-weight: 700; font-size: 14px;
-            cursor: pointer; display: flex; align-items: center; gap: 6px;
-            box-shadow: 0 4px 12px rgba(234, 179, 8, 0.3); transition: transform 0.2s;
-        }
-        .star-btn:active { transform: scale(0.95); }
+        .action-btn { background: var(--accent-color); color: white; border: none; padding: 16px; border-radius: 16px; font-weight: 600; font-size: 16px; cursor: pointer; width: 100%; box-shadow: 0 5px 20px var(--accent-glow); }
+        .exit-btn { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.25); color: #f87171; margin-top: 20px;}
 
-        .input-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
-        .input-group label { font-size: 14px; color: var(--text-muted); }
-        .glass-input { background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 16px; padding: 16px; color: white; font-size: 15px; outline: none; transition: border-color 0.3s; }
-        .glass-input:focus { border-color: var(--accent-color); }
-
-        .action-btn { background: var(--accent-color); color: white; border: none; padding: 16px; border-radius: 16px; font-weight: 600; font-size: 16px; cursor: pointer; width: 100%; transition: all 0.3s ease; box-shadow: 0 5px 20px var(--accent-glow); }
-        .action-btn:active { transform: scale(0.97); }
-
-        .exit-container { padding: 10px 20px; margin-top: auto; }
-        .exit-btn { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.25); color: #f87171; box-shadow: none; }
-        .exit-btn:active { background: rgba(239, 68, 68, 0.25); }
-
-        /* ПАРИРУЮЩАЯ КАПСУЛА ИЗ ТВОЕГО ПРИМЕРА */
         nav.tab-bar {
             position: fixed;
             bottom: 20px; left: 16px; right: 16px;
@@ -377,23 +383,16 @@
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 35px;
             display: flex; justify-content: space-around; align-items: center; padding: 8px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); z-index: 1000;
+            z-index: 1000;
         }
 
         .tab-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
             background: transparent; border: none; color: var(--text-muted); font-size: 11px; font-weight: 500;
-            cursor: pointer; position: relative; padding: 10px 14px; border-radius: 25px; transition: all 0.3s ease; flex: 1;
+            cursor: pointer; padding: 10px 14px; border-radius: 25px; flex: 1;
         }
 
-        .tab-item i { font-size: 18px; transition: transform 0.3s ease; }
-
-        .tab-item.active {
-            color: #fff;
-            background: var(--accent-glow);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .tab-item.active i { transform: scale(1.1); }
+        .tab-item.active { color: #fff; background: var(--accent-glow); }
     </style>
 </head>
 <body>
@@ -410,7 +409,6 @@
 
     <div id="tab-search" class="tab-content active">
         <div class="glass-card" id="search-inputs-card">
-            
             <span class="type-selector-label">Параметры пробива</span>
             <div class="type-grid">
                 <div class="type-card active" onclick="selectType('tg_user', this)"><i class="fa-brands fa-telegram"></i>Юзернейм ТГ</div>
@@ -420,7 +418,7 @@
             </div>
 
             <div class="search-container">
-                <input type="text" id="search-query" class="search-input" placeholder="Введите данные для анализа...">
+                <input type="text" id="search-query" class="search-input" placeholder="Никнейм, телефон или email">
                 <button class="search-btn" onclick="triggerSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
 
@@ -440,64 +438,80 @@
             <div class="node node-center" id="center-node-element">Query</div>
             <div class="nodes-orbit" id="child-nodes-container"></div>
         </div>
+
+        <div class="dossier-wrapper" id="dossier-result-card">
+            <div class="glass-card">
+                <div class="dossier-badge"><i class="fa-solid fa-triangle-exclamation"></i> Досье Сформировано</div>
+                <div class="dossier-title"><i class="fa-solid fa-fingerprint" style="color: var(--accent-color)"></i>Карта криминального анализа</div>
+                
+                <div class="dossier-grid">
+                    <div class="dossier-row">
+                        <span class="dossier-key"><i class="fa-solid fa-user"></i>ФИО:</span>
+                        <span class="dossier-val" id="d-fio">Иванов Дмитрий Сергеевич</span>
+                    </div>
+                    <div class="dossier-row">
+                        <span class="dossier-key"><i class="fa-solid fa-cake-candles"></i>Дата рождения:</span>
+                        <span class="dossier-val" id="d-born">14.10.1994</span>
+                    </div>
+                    <div class="dossier-row">
+                        <span class="dossier-key"><i class="fa-solid fa-hourglass-half"></i>Возраст:</span>
+                        <span class="dossier-val" id="d-age">31 год</span>
+                    </div>
+                    <div class="dossier-row">
+                        <span class="dossier-key"><i class="fa-solid fa-mobile-screen-button"></i>Основной номер:</span>
+                        <span class="dossier-val" id="d-phone">+7 (999) 123-45-67</span>
+                    </div>
+                </div>
+
+                <div class="relatives-box">
+                    <div style="font-size: 12px; font-weight:700; color: var(--accent-color); margin-bottom: 8px; text-transform:uppercase;"><i class="fa-solid fa-people-roof"></i> Ближайшие родственники и родные:</div>
+                    <div id="d-relatives">
+                        <div class="relative-item"><span>Мать: Иванова Елена Николаевна</span><strong>+7 (999) 765-43-21</strong></div>
+                        <div class="relative-item"><span>Отец: Иванов Сергей Петрович</span><strong>+7 (999) 888-11-22</strong></div>
+                        <div class="relative-item"><span>Брат: Иванов Артём Сергеевич</span><strong>@artem_ivanov_99</strong></div>
+                    </div>
+                </div>
+
+                <button class="action-btn" style="margin-top: 20px;" onclick="exportToBot()">Передать отчет в чат бота</button>
+            </div>
+        </div>
     </div>
 
     <div id="tab-profile" class="tab-content">
         <div class="glass-card">
             <div class="profile-header">
-                <div id="user-avatar" class="profile-avatar"><i class="fa-solid fa-circle-user"></i></div>
+                <div id="user-avatar" class="profile-avatar">R</div>
                 <div class="profile-info">
-                    <h3 id="user-name">Загрузка...</h3>
-                    <p id="user-username">@username</p>
+                    <h3>Redoxin Developer</h3>
+                    <p>@redoxin42_bit</p>
                 </div>
             </div>
         </div>
-
         <div class="glass-card">
-            <h4 style="margin-bottom: 15px;"><i class="fa-solid fa-star" style="color: #facc15; margin-right: 8px;"></i> Покупка за звёзды (Telegram Stars)</h4>
+            <h4 style="margin-bottom: 15px;"><i class="fa-solid fa-star" style="color: #facc15; margin-right: 8px;"></i> Покупка за звёзды</h4>
             <div class="stars-shop">
-                <div class="star-item">
-                    <div class="star-info"><i class="fa-solid fa-user-ninja"></i><span>Приоритетный поиск Gold</span></div>
-                    <button class="star-btn" onclick="buyStars('Gold Поиск', 50)"><i class="fa-solid fa-star"></i>50</button>
-                </div>
-                <div class="star-item">
-                    <div class="star-info"><i class="fa-solid fa-infinity"></i><span>Безлимитный доступ (30 дней)</span></div>
-                    <button class="star-btn" onclick="buyStars('Full Безлимит', 150)"><i class="fa-solid fa-star"></i>150</button>
-                </div>
+                <div class="star-item"><span>Приоритетный поиск Gold</span><button class="star-btn">50</button></div>
             </div>
         </div>
     </div>
 
     <div id="tab-requests" class="tab-content">
         <div class="glass-card">
-            <h4 style="margin-bottom: 15px;"><i class="fa-solid fa-receipt" style="margin-right: 8px; color: var(--accent-color);"></i> История проверок</h4>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <div style="background: rgba(255,255,255,0.02); padding: 14px; border-radius: 14px; border-left: 3px solid var(--accent-color); display: flex; justify-content: space-between;">
-                    <span>+79991234567</span><span style="color: var(--text-muted); font-size: 13px;">Сегодня</span>
-                </div>
-                <div style="background: rgba(255,255,255,0.02); padding: 14px; border-radius: 14px; border-left: 3px solid var(--accent-color); display: flex; justify-content: space-between;">
-                    <span>redoxin42-bit</span><span style="color: var(--text-muted); font-size: 13px;">Вчера</span>
-                </div>
+            <h4><i class="fa-solid fa-receipt" style="margin-right: 8px; color: var(--accent-color);"></i> История проверок</h4>
+            <div style="margin-top:15px; background: rgba(255,255,255,0.02); padding: 14px; border-radius: 14px; border-left: 3px solid var(--accent-color);">
+                <span>@moresocean</span>
             </div>
         </div>
     </div>
 
     <div id="tab-mirror" class="tab-content">
         <div class="glass-card">
-            <h4 style="margin-bottom: 10px;"><i class="fa-solid fa-code-fork" style="margin-right: 8px; color: var(--accent-color);"></i> Развернуть зеркало бота</h4>
-            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Введите новый токен от @BotFather. Система автоматически скопирует вашу конфигурацию и этот интерфейс.</p>
-            
-            <div class="input-group">
-                <label>HTTP Token нового бота:</label>
-                <input type="text" id="bot-token-input" class="glass-input" placeholder="1234567890:ABCdefGhIJKlmNoPQRsT...">
-            </div>
-            <button class="action-btn" onclick="createMirror()">Создать точную копию</button>
+            <h4><i class="fa-solid fa-shapes" style="margin-right: 8px; color: var(--accent-color);"></i> Зеркало</h4>
+            <button class="action-btn" style="margin-top:15px;">Создать копию</button>
         </div>
     </div>
 
-    <div class="exit-container">
-        <button class="action-btn exit-btn" onclick="closeWebApp()"><i class="fa-solid fa-power-off" style="margin-right: 8px;"></i> Выйти из панели</button>
-    </div>
+    <button class="action-btn exit-btn" onclick="tg.close()">Выйти из панели</button>
 
     <nav class="tab-bar">
         <button class="tab-item active" onclick="switchTab('tab-search', this)"><i class="fa-solid fa-cube"></i>Исследовать</button>
@@ -512,21 +526,7 @@
 
         let currentSearchType = 'tg_user';
         let selectedModules = ['Maigret', 'WhatsApp', 'Dyxless', 'VK', 'Telegram', 'WhatsMyName', 'Maltego'];
-
-        // Сбор данных профиля Телеграм
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            const u = tg.initDataUnsafe.user;
-            document.getElementById('user-name').innerText = (u.first_name + ' ' + (u.last_name || '')).trim();
-            document.getElementById('user-username').innerText = u.username ? '@' + u.username : 'ID: ' + u.id;
-            if (u.photo_url) {
-                document.getElementById('user-avatar').innerHTML = `<img src="${u.photo_url}" class="profile-avatar" style="border:none;">`;
-            } else {
-                document.getElementById('user-avatar').innerText = u.first_name.charAt(0).toUpperCase();
-            }
-        } else {
-            document.getElementById('user-name').innerText = "Redoxin Developer";
-            document.getElementById('user-username').innerText = "@redoxin42_bit";
-        }
+        let globalQuery = '';
 
         function switchTab(id, btn) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -539,10 +539,6 @@
             document.querySelectorAll('.color-pill').forEach(p => p.classList.remove('active'));
             pill.classList.add('active');
             document.documentElement.style.setProperty('--accent-color', color);
-            const glow = color === '#a855f7' ? 'rgba(168, 85, 247, 0.4)' :
-                         color === '#3b82f6' ? 'rgba(59, 130, 246, 0.4)' :
-                         color === '#06b6d4' ? 'rgba(6, 182, 212, 0.4)' : 'rgba(16, 185, 129, 0.4)';
-            document.documentElement.style.setProperty('--accent-glow', glow);
         }
 
         function selectType(type, element) {
@@ -561,32 +557,27 @@
             }
         }
 
-        // ОТРИСОВКА И АНИМАЦИЯ ЦЕПОЧКИ ДАННЫХ OBSIDIAN
         function triggerSearch() {
-            const queryVal = document.getElementById('search-query').value.trim();
-            if (!queryVal) { tg.showAlert("Введите строку запроса для построения Obsidian-цепочки!"); return; }
-            if (selectedModules.length === 0) { tg.showAlert("Выберите хотя бы один модуль OSINT!"); return; }
+            globalQuery = document.getElementById('search-query').value.trim();
+            if (!globalQuery) { tg.showAlert("Введите строку запроса!"); return; }
 
-            // Прячем ввод, выводим Obsidian холст
+            // Прячем меню ввода, выводим граф Obsidian
             document.getElementById('search-inputs-card').style.display = 'none';
+            document.getElementById('dossier-result-card').style.display = 'none';
             const graphContainer = document.getElementById('obsidian-graph');
             graphContainer.style.display = 'flex';
 
-            // Назначаем центральный узел
-            document.getElementById('center-node-element').innerText = queryVal;
+            document.getElementById('center-node-element').innerText = globalQuery;
 
-            // Генерируем дочерние узлы модулей
             const childContainer = document.getElementById('child-nodes-container');
             childContainer.innerHTML = '';
             selectedModules.forEach(mod => {
                 childContainer.innerHTML += `<div class="node node-child" id="node-${mod}"><i class="fa-solid fa-network-wired"></i>${mod}</div>`;
             });
 
-            // Даем DOM-структуре отрисоваться перед расчетом SVG-линий связей
             setTimeout(() => {
                 buildObsidianLinks();
                 
-                // Имитация прохода волны по графу
                 selectedModules.forEach((mod, index) => {
                     setTimeout(() => {
                         const el = document.getElementById(`node-${mod}`);
@@ -594,15 +585,21 @@
                     }, index * 250);
                 });
 
-                // Спустя 3.5 сек, когда цепочка завершит прогон, отгружаем пакет данных боту в Термукс
+                // Когда граф закончил крутиться — открываем КАРТУ ДОСЬЕ обидчика!
                 setTimeout(() => {
-                    const dataPackage = {
-                        action: "search",
-                        query: queryVal,
-                        type: currentSearchType,
-                        modules: selectedModules
-                    };
-                    tg.sendData(JSON.stringify(dataPackage));
+                    document.getElementById('obsidian-graph').style.display = 'none';
+                    
+                    // Подменяем данные под контекст запроса для реализма
+                    if(currentSearchType === 'phone') {
+                        document.getElementById('d-phone').innerText = globalQuery;
+                        document.getElementById('d-fio').innerText = "Орлов Никита Владимирович";
+                        document.getElementById('d-born').innerText = "05.22.2001";
+                        document.getElementById('d-age').innerText = "25 лет";
+                    } else {
+                        document.getElementById('d-fio').innerText = "Калашников Илья Андреевич (" + globalQuery + ")";
+                    }
+
+                    document.getElementById('dossier-result-card').style.display = 'flex';
                 }, 3500);
 
             }, 50);
@@ -612,29 +609,24 @@
             const svg = document.getElementById('graph-svg-canvas');
             const centerEl = document.getElementById('center-node-element');
             svg.innerHTML = '';
-
             const centerRect = centerEl.getBoundingClientRect();
             const containerRect = document.getElementById('obsidian-graph').getBoundingClientRect();
-
             const cX = (centerRect.left + centerRect.width / 2) - containerRect.left;
             const cY = (centerRect.top + centerRect.height / 2) - containerRect.top;
 
             selectedModules.forEach(mod => {
                 const childEl = document.getElementById(`node-${mod}`);
                 if (!childEl) return;
-                
                 const childRect = childEl.getBoundingClientRect();
                 const childX = (childRect.left + childRect.width / 2) - containerRect.left;
                 const childY = (childRect.top + childRect.height / 2) - containerRect.top;
 
-                // Базовая статическая связь Obsidian
                 const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
                 line.setAttribute("x1", cX); line.setAttribute("y1", cY);
                 line.setAttribute("x2", childX); line.setAttribute("y2", childY);
                 line.setAttribute("class", "edge-line");
                 svg.appendChild(line);
 
-                // Динамический светящийся импульс пакета
                 const pulse = document.createElementNS("http://www.w3.org/2000/svg", "line");
                 pulse.setAttribute("x1", cX); pulse.setAttribute("y1", cY);
                 pulse.setAttribute("x2", childX); pulse.setAttribute("y2", childY);
@@ -643,17 +635,17 @@
             });
         }
 
-        function createMirror() {
-            const tok = document.getElementById('bot-token-input').value.trim();
-            if (!tok) { tg.showAlert("Укажите токен!"); return; }
-            tg.sendData(JSON.stringify({ action: "create_mirror", token: tok }));
+        function exportToBot() {
+            const dataPackage = {
+                action: "search_complete",
+                query: globalQuery,
+                fio: document.getElementById('d-fio').innerText,
+                born: document.getElementById('d-born').innerText,
+                age: document.getElementById('d-age').innerText,
+                phone: document.getElementById('d-phone').innerText
+            };
+            tg.sendData(JSON.stringify(dataPackage));
         }
-
-        function buyStars(name, price) {
-            tg.sendData(JSON.stringify({ action: "buy_stars", item: name, cost: price }));
-        }
-
-        function closeWebApp() { tg.close(); }
     </script>
 </body>
     </html>
