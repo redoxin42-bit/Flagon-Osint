@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Flagon OSINT</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="blob-container">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="app-container">
+        <header>
+            <div class="logo">Flagon</div>
+            <div class="theme-selector">
+                <div class="theme-dot dot-blue" onclick="setTheme('#0066ff', '0, 102, 255')"></div>
+                <div class="theme-dot dot-purple" onclick="setTheme('#9d00ff', '157, 0, 255')"></div>
+                <div class="theme-dot dot-emerald" onclick="setTheme('#00ff88', '0, 255, 136')"></div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="screen active" id="screen-investigate">
+                <div class="search-wrapper" id="search-initial">
+                    <div class="glass-card" style="width: 100%;">
+                        <div class="search-box">
+                            <input type="text" id="osint-input" placeholder="Никнейм, телефон или email">
+                            <button class="search-btn" onclick="startScan()">
+                                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                            </button>
+                        </div>
+                        <div class="modules-grid">
+                            <div class="module-chip" id="mod-vk">VK</div>
+                            <div class="module-chip" id="mod-wa">WhatsApp</div>
+                            <div class="module-chip" id="mod-tg">Telegram</div>
+                            <div class="module-chip" id="mod-mg">Maigret</div>
+                            <div class="module-chip" id="mod-sh">Sherlock</div>
+                            <div class="module-chip" id="mod-dx">Dyxless</div>
+                            <div class="module-chip" id="mod-wn">WhatsMyName</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="graph-container" id="search-results">
+                    <svg class="graph-svg" id="graph-svg-element"></svg>
+                    <div id="graph-nodes-container"></div>
+                </div>
+            </div>
+
+            <div class="screen" id="screen-profile">
+                <div class="glass-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">U</div>
+                        <div class="profile-info">
+                            <h2>@user_tg</h2>
+                            <p>ID: 874920472</p>
+                        </div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-num">42</div>
+                            <div class="stat-label">Всего поисков</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-num">3</div>
+                            <div class="stat-label">Активных зеркал</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card limit-card">
+                    <div class="limit-info">
+                        <h3>Доступные лимиты</h3>
+                        <div class="limit-count">2 / 2</div>
+                    </div>
+                    <div class="star-badge">Бесплатно</div>
+                </div>
+            </div>
+
+            <div class="screen" id="screen-requests">
+                <div class="glass-card limit-card">
+                    <div class="limit-info">
+                        <h3>Ваш баланс запросов</h3>
+                        <div class="limit-count">2</div>
+                    </div>
+                    <div class="star-badge" style="background: rgba(255,255,255,0.05); color: #fff; border-color: rgba(255,255,255,0.1);">Лимит</div>
+                </div>
+                <div class="shop-title">Покупка дополнительных запросов</div>
+                <div class="shop-grid">
+                    <div class="shop-item">
+                        <div>
+                            <div class="item-name">+10 проверок</div>
+                            <div class="item-desc">Пакет Старт</div>
+                        </div>
+                        <button class="buy-btn">50 ⭐️</button>
+                    </div>
+                    <div class="shop-item">
+                        <div>
+                            <div class="item-name">+50 проверок</div>
+                            <div class="item-desc">Пакет Профи</div>
+                        </div>
+                        <button class="buy-btn">200 ⭐️</button>
+                    </div>
+                    <div class="shop-item">
+                        <div>
+                            <div class="item-name">+200 проверок</div>
+                            <div class="item-desc">Пакет Ультра</div>
+                        </div>
+                        <button class="buy-btn">700 ⭐️</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="screen" id="screen-mirror">
+                <div class="glass-card">
+                    <div class="mirror-desc">
+                        Создайте точную копию нашего бота по реферальной системе. Получайте до 20% от всех покупок звёзд вашими рефералами прямо на свой баланс.
+                    </div>
+                    <button class="action-btn" onclick="copyMirrorLink()">
+                        <svg style="width:20px;height:20px;fill:currentColor" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                        Создать зеркало
+                    </button>
+                </div>
+                <div class="table-title">Ваши активные зеркала</div>
+                <div class="glass-card" style="padding: 10px 15px;">
+                    <table class="mirror-table">
+                        <thead>
+                            <tr>
+                                <th>Название</th>
+                                <th>Юзеры</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>flagon_bot_v1</td>
+                                <td>142</td>
+                                <td class="status-active">Активно</td>
+                            </tr>
+                            <tr>
+                                <td>shadow_probe_bot</td>
+                                <td>39</td>
+                                <td class="status-active">Активно</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <nav id="nav-bar">
+            <div class="nav-capsule" id="nav-capsule"></div>
+            <div class="nav-item active" onclick="switchTab(0, this)">
+                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                <span>Исследовать</span>
+            </div>
+            <div class="nav-item" onclick="switchTab(1, this)">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+                <span>Профиль</span>
+            </div>
+            <div class="nav-item" onclick="switchTab(2, this)">
+                <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"/></svg>
+                <span>Запросы</span>
+            </div>
+            <div class="nav-item" onclick="switchTab(3, this)">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                <span>Зеркало</span>
+            </div>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
