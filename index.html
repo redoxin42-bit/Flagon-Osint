@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Flagon OSINT</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -11,8 +11,8 @@
             --bg-color: #0b0813;
             --accent-color: #a855f7;
             --accent-glow: rgba(168, 85, 247, 0.4);
-            --glass-bg: rgba(25, 18, 41, 0.55);
-            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-bg: rgba(25, 18, 41, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
             --text-color: #f3f4f6;
             --text-muted: #9ca3af;
         }
@@ -21,28 +21,28 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: radial-gradient(circle at top, #1e1135 0%, var(--bg-color) 70%);
+            background: radial-gradient(circle at top, #1e1135 0%, var(--bg-color) 100%);
             color: var(--text-color);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
-            padding-bottom: 90px;
+            padding-bottom: 110px;
         }
 
-        /* Навигационная панель сверху */
         header {
             padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(11, 8, 19, 0.5);
-            backdrop-filter: blur(10px);
+            background: rgba(11, 8, 19, 0.6);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border-bottom: 1px solid var(--glass-border);
             position: sticky;
             top: 0;
@@ -50,98 +50,129 @@
         }
 
         .logo {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
-            letter-spacing: 1px;
-            background: linear-gradient(to right, #fff, var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            color: #fff;
         }
 
-        /* Анимированный переключатель цвета */
+        .logo i {
+            color: var(--accent-color);
+            filter: drop-shadow(0 0 8px var(--accent-color));
+            transition: color 0.3s, filter 0.3s;
+        }
+
         .color-picker-container {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             background: rgba(255, 255, 255, 0.03);
-            padding: 6px 12px;
-            border-radius: 20px;
+            padding: 6px 14px;
+            border-radius: 30px;
             border: 1px solid var(--glass-border);
-            backdrop-filter: blur(5px);
         }
 
         .color-pill {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             cursor: pointer;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+            position: relative;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid rgba(0,0,0,0.3);
+        }
+
+        .color-pill::after {
+            content: '';
+            position: absolute;
+            top: -5px; left: -5px; right: -5px; bottom: -5px;
             border: 2px solid transparent;
+            border-radius: 50%;
+            transition: border-color 0.3s, transform 0.3s;
+            transform: scale(0.8);
         }
 
-        .color-pill:hover, .color-pill.active {
-            transform: scale(1.3);
-            border-color: #fff;
-        }
+        .color-pill.active { transform: scale(1.15); }
+        .color-pill.active::after { border-color: var(--accent-color); transform: scale(1); }
 
-        .pill-purple { background: #a855f7; box-shadow: 0 0 8px #a855f7; }
-        .pill-blue { background: #3b82f6; box-shadow: 0 0 8px #3b82f6; }
-        .pill-cyan { background: #06b6d4; box-shadow: 0 0 8px #06b6d4; }
-        .pill-emerald { background: #10b981; box-shadow: 0 0 8px #10b981; }
+        .pill-purple { background: #a855f7; }
+        .pill-blue { background: #3b82f6; }
+        .pill-cyan { background: #06b6d4; }
+        .pill-emerald { background: #10b981; }
 
-        /* Контентные зоны вкладки */
         .tab-content {
             display: none;
             padding: 20px;
-            animation: fadeIn 0.4s ease forwards;
+            animation: tabSlide 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
             flex-direction: column;
             gap: 20px;
         }
 
-        .tab-content.active {
-            display: flex;
+        .tab-content.active { display: flex; }
+
+        @keyframes tabSlide {
+            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Стиль Liquid Glass для карточек */
         .glass-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
             padding: 24px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
         }
 
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -50%; width: 200%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.03), transparent);
-            transform: skewX(-25deg);
-            transition: 0.75s;
-            pointer-events: none;
+        /* Выбор типа пробива */
+        .type-selector-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
         }
 
-        .glass-card:hover::before {
-            left: 120%;
+        .type-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
         }
 
-        /* Поисковая панель */
+        .type-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            padding: 12px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+        }
+
+        .type-card i { font-size: 14px; width: 16px; text-align: center; }
+
+        .type-card.active {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-color);
+            color: #fff;
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.02);
+        }
+
         .search-container {
             display: flex;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 18px;
             padding: 6px;
             align-items: center;
             transition: border-color 0.3s, box-shadow 0.3s;
@@ -149,7 +180,7 @@
 
         .search-container:focus-within {
             border-color: var(--accent-color);
-            box-shadow: 0 0 12px var(--accent-glow);
+            box-shadow: 0 0 15px var(--accent-glow);
         }
 
         .search-input {
@@ -165,27 +196,23 @@
         .search-btn {
             background: var(--accent-color);
             border: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
             color: white;
             cursor: pointer;
-            transition: transform 0.2s, background-color 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: transform 0.2s, background-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 10px var(--accent-glow);
         }
 
-        .search-btn:active {
-            transform: scale(0.92);
-        }
+        .search-btn:active { transform: scale(0.92); }
 
-        /* Сетка сервисов */
+        /* Обновленная сетка модулей */
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(3, 11fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 10px;
-            margin-top: 15px;
+            margin-top: 18px;
         }
 
         .service-tag {
@@ -194,9 +221,9 @@
             padding: 12px 6px;
             border-radius: 14px;
             text-align: center;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
             color: var(--text-muted);
             display: flex;
             flex-direction: column;
@@ -204,223 +231,175 @@
             gap: 6px;
         }
 
-        .service-tag i {
-            font-size: 16px;
-        }
+        .service-tag i { font-size: 16px; }
 
         .service-tag.selected {
             background: var(--accent-glow);
             border-color: var(--accent-color);
             color: #fff;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
         }
 
-        /* Профиль элементы */
-        .profile-header {
-            display: flex;
+        /* КАНВАС-ГРАФ ОБСИДИАНА (OBSIDIAN DATA CHAIN) */
+        .obsidian-container {
+            display: none;
+            flex-direction: column;
             align-items: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .avatar-container {
             position: relative;
+            padding: 20px 10px;
+            background: rgba(10, 7, 20, 0.8);
+            border-radius: 24px;
+            border: 1px dashed var(--accent-color);
+            animation: fadeIn 0.4s ease forwards;
+            overflow: hidden;
+            min-height: 320px;
         }
 
-        .profile-avatar {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            border: 2px solid var(--accent-color);
-            background: #251e3e;
+        .graph-svg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .node {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            object-fit: cover;
-            box-shadow: 0 0 15px var(--accent-glow);
+            gap: 8px;
+            max-width: 140px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
-        .status-badge {
-            position: absolute;
-            bottom: 0; right: 0;
-            background: #10b981;
-            width: 16px; height: 16px;
-            border-radius: 50%;
-            border: 2px solid var(--bg-color);
+        .node-center {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 20px var(--accent-glow);
+            font-size: 14px;
+            background: rgba(30, 20, 50, 0.8);
+            margin-bottom: 70px;
+            margin-top: 10px;
         }
 
-        .profile-info h3 { font-size: 20px; margin-bottom: 4px; }
+        .nodes-orbit {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px 40px;
+            width: 100%;
+            justify-items: center;
+        }
+
+        .node-child {
+            animation: pulseNode 2s infinite ease-in-out;
+        }
+
+        .node-child.active-scan {
+            border-color: #3b82f6;
+            color: #fff;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+        }
+
+        @keyframes pulseNode {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        /* Анимация импульсных линий */
+        .edge-line {
+            stroke: rgba(255, 255, 255, 0.08);
+            stroke-width: 1.5;
+        }
+
+        .pulse-line {
+            stroke: var(--accent-color);
+            stroke-width: 2;
+            stroke-dasharray: 8 20;
+            animation: dash 1.5s linear infinite;
+        }
+
+        @keyframes dash {
+            to { stroke-dashoffset: -40; }
+        }
+
+        /* Элементы Профиля */
+        .profile-header { display: flex; align-items: center; gap: 20px; }
+        .profile-avatar {
+            width: 75px; height: 75px; border-radius: 50%;
+            border: 2px solid var(--accent-color); background: #201935;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; object-fit: cover; box-shadow: 0 0 20px var(--accent-glow);
+        }
+        .profile-info h3 { font-size: 22px; margin-bottom: 4px; font-weight: 700; }
         .profile-info p { color: var(--text-muted); font-size: 14px; }
 
-        /* Покупка за звезды */
-        .stars-shop {
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .star-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--glass-border);
-            padding: 14px 18px;
-            border-radius: 16px;
-            transition: background 0.3s;
-        }
-
-        .star-item:hover { background: rgba(255,255,255,0.04); }
-
-        .star-info { display: flex; align-items: center; gap: 10px; }
-        .star-info i { color: #eab308; font-size: 18px; }
+        .stars-shop { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+        .star-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 16px; border-radius: 18px; }
+        .star-info { display: flex; align-items: center; gap: 12px; font-weight: 500; }
+        .star-info i { color: #facc15; font-size: 20px; filter: drop-shadow(0 0 5px rgba(250,204,21,0.4)); }
 
         .star-btn {
-            background: linear-gradient(135deg, #eab308, #ca8a04);
-            color: #000;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3);
-            transition: transform 0.2s;
+            background: linear-gradient(135deg, #facc15, #eab308); color: #0d0914; border: none;
+            padding: 10px 16px; border-radius: 12px; font-weight: 700; font-size: 14px;
+            cursor: pointer; display: flex; align-items: center; gap: 6px;
+            box-shadow: 0 4px 12px rgba(234, 179, 8, 0.3); transition: transform 0.2s;
         }
-
         .star-btn:active { transform: scale(0.95); }
 
-        /* Зеркало вкладка */
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
+        .input-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+        .input-group label { font-size: 14px; color: var(--text-muted); }
+        .glass-input { background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 16px; padding: 16px; color: white; font-size: 15px; outline: none; transition: border-color 0.3s; }
+        .glass-input:focus { border-color: var(--accent-color); }
 
-        .input-group label {
-            font-size: 14px;
-            color: var(--text-muted);
-        }
+        .action-btn { background: var(--accent-color); color: white; border: none; padding: 16px; border-radius: 16px; font-weight: 600; font-size: 16px; cursor: pointer; width: 100%; transition: all 0.3s ease; box-shadow: 0 5px 20px var(--accent-glow); }
+        .action-btn:active { transform: scale(0.97); }
 
-        .glass-input {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--glass-border);
-            border-radius: 14px;
-            padding: 14px;
-            color: white;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
+        .exit-container { padding: 10px 20px; margin-top: auto; }
+        .exit-btn { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.25); color: #f87171; box-shadow: none; }
+        .exit-btn:active { background: rgba(239, 68, 68, 0.25); }
 
-        .glass-input:focus {
-            border-color: var(--accent-color);
-        }
-
-        .action-btn {
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 14px;
-            font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.3s, transform 0.2s;
-            box-shadow: 0 4px 15px var(--accent-glow);
-        }
-
-        .action-btn:active { transform: scale(0.98); }
-
-        /* Список истории запросов */
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .history-item {
-            background: rgba(255,255,255,0.02);
-            border-left: 3px solid var(--accent-color);
-            padding: 12px 16px;
-            border-radius: 0 12px 12px 0;
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .history-date { color: var(--text-muted); font-size: 12px; }
-
-        /* Жидкая кнопка Выйти */
-        .exit-container {
-            padding: 10px 20px;
-            margin-top: auto;
-        }
-        .exit-btn {
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #f87171;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-        .exit-btn:hover {
-            background: rgba(239, 68, 68, 0.25);
-            border-color: rgba(239, 68, 68, 0.5);
-        }
-
-        /* Нижний Таб-Бар */
+        /* ПАРИРУЮЩАЯ КАПСУЛА ИЗ ТВОЕГО ПРИМЕРА */
         nav.tab-bar {
             position: fixed;
-            bottom: 0; left: 0; right: 0;
-            background: rgba(15, 11, 28, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--glass-border);
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 0;
-            z-index: 1000;
+            bottom: 20px; left: 16px; right: 16px;
+            background: rgba(18, 13, 33, 0.75);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 35px;
+            display: flex; justify-content: space-around; align-items: center; padding: 8px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); z-index: 1000;
         }
 
         .tab-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 11px;
-            cursor: pointer;
-            width: 60px;
-            transition: color 0.3s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+            background: transparent; border: none; color: var(--text-muted); font-size: 11px; font-weight: 500;
+            cursor: pointer; position: relative; padding: 10px 14px; border-radius: 25px; transition: all 0.3s ease; flex: 1;
         }
 
-        .tab-item i {
-            font-size: 20px;
-            transition: transform 0.3s, color 0.3s;
-        }
+        .tab-item i { font-size: 18px; transition: transform 0.3s ease; }
 
         .tab-item.active {
-            color: var(--accent-color);
+            color: #fff;
+            background: var(--accent-glow);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-
-        .tab-item.active i {
-            transform: translateY(-4px) scale(1.1);
-            color: var(--accent-color);
-        }
+        .tab-item.active i { transform: scale(1.1); }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo"><i class="fa-solid fa-shield-halved"></i> Flag<span>on</span></div>
+        <div class="logo"><i class="fa-solid fa-circle-nodes"></i> Flag<span>on</span></div>
         <div class="color-picker-container">
             <div class="color-pill pill-purple active" onclick="changeTheme('#a855f7', this)"></div>
             <div class="color-pill pill-blue" onclick="changeTheme('#3b82f6', this)"></div>
@@ -430,30 +409,43 @@
     </header>
 
     <div id="tab-search" class="tab-content active">
-        <div class="glass-card">
+        <div class="glass-card" id="search-inputs-card">
+            
+            <span class="type-selector-label">Параметры пробива</span>
+            <div class="type-grid">
+                <div class="type-card active" onclick="selectType('tg_user', this)"><i class="fa-brands fa-telegram"></i>Юзернейм ТГ</div>
+                <div class="type-card" onclick="selectType('phone', this)"><i class="fa-solid fa-phone"></i>Номер телефона</div>
+                <div class="type-card" onclick="selectType('vk_id', this)"><i class="fa-brands fa-vk"></i>Профиль ВК</div>
+                <div class="type-card" onclick="selectType('whatsapp', this)"><i class="fa-brands fa-whatsapp"></i>Аккаунт WA</div>
+            </div>
+
             <div class="search-container">
-                <input type="text" id="search-query" class="search-input" placeholder="Никнейм, телефон или email">
+                <input type="text" id="search-query" class="search-input" placeholder="Введите данные для анализа...">
                 <button class="search-btn" onclick="triggerSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
+
             <div class="services-grid">
-                <div class="service-tag selected" onclick="toggleService(this, 'vk')"><i class="fa-brands fa-vk"></i>VK</div>
-                <div class="service-tag selected" onclick="toggleService(this, 'wa')"><i class="fa-brands fa-whatsapp"></i>WhatsApp</div>
-                <div class="service-tag selected" onclick="toggleService(this, 'tg')"><i class="fa-brands fa-telegram"></i>Telegram</div>
-                <div class="service-tag" onclick="toggleService(this, 'maigret')"><i class="fa-solid fa-user-secret"></i>Maigret</div>
-                <div class="service-tag" onclick="toggleService(this, 'sherlock')"><i class="fa-solid fa-magnifying-glass-location"></i>Sherlock</div>
-                <div class="service-tag" onclick="toggleService(this, 'dyxless')"><i class="fa-solid fa-database"></i>Dyxless</div>
-                <div class="service-tag" onclick="toggleService(this, 'wmn')"><i class="fa-solid fa-address-book"></i>WhatsMyName</div>
+                <div class="service-tag selected" onclick="toggleService(this, 'Maigret')"><i class="fa-solid fa-mask"></i>Maigret</div>
+                <div class="service-tag selected" onclick="toggleService(this, 'WhatsApp')"><i class="fa-brands fa-whatsapp"></i>WhatsApp</div>
+                <div class="service-tag selected" onclick="toggleService(this, 'Dyxless')"><i class="fa-solid fa-server"></i>Dyxless</div>
+                <div class="service-tag selected" onclick="toggleService(this, 'VK')"><i class="fa-brands fa-vk"></i>VK</div>
+                <div class="service-tag selected" onclick="toggleService(this, 'Telegram')"><i class="fa-brands fa-telegram"></i>Telegram</div>
+                <div class="service-tag selected" onclick="toggleService(this, 'WhatsMyName')"><i class="fa-solid fa-signature"></i>Wmn</div>
+                <div class="service-tag selected" onclick="toggleService(this, 'Maltego')"><i class="fa-solid fa-diagram-project"></i>Maltego</div>
             </div>
+        </div>
+
+        <div class="obsidian-container" id="obsidian-graph">
+            <svg class="graph-svg" id="graph-svg-canvas"></svg>
+            <div class="node node-center" id="center-node-element">Query</div>
+            <div class="nodes-orbit" id="child-nodes-container"></div>
         </div>
     </div>
 
     <div id="tab-profile" class="tab-content">
         <div class="glass-card">
             <div class="profile-header">
-                <div class="avatar-container">
-                    <div id="user-avatar" class="profile-avatar"><i class="fa-solid fa-user"></i></div>
-                    <div class="status-badge"></div>
-                </div>
+                <div id="user-avatar" class="profile-avatar"><i class="fa-solid fa-circle-user"></i></div>
                 <div class="profile-info">
                     <h3 id="user-name">Загрузка...</h3>
                     <p id="user-username">@username</p>
@@ -462,15 +454,15 @@
         </div>
 
         <div class="glass-card">
-            <h4 style="margin-bottom: 15px;"><i class="fa-solid fa-star" style="color: #eab308; margin-right: 8px;"></i> Покупка за звёзды</h4>
+            <h4 style="margin-bottom: 15px;"><i class="fa-solid fa-star" style="color: #facc15; margin-right: 8px;"></i> Покупка за звёзды (Telegram Stars)</h4>
             <div class="stars-shop">
                 <div class="star-item">
-                    <div class="star-info"><i class="fa-solid fa-bolt"></i><span>Поиск уровня Gold</span></div>
-                    <button class="star-btn" onclick="buyStars('Gold Поиск', 50)"><i class="fa-solid fa-star"></i> 50</button>
+                    <div class="star-info"><i class="fa-solid fa-user-ninja"></i><span>Приоритетный поиск Gold</span></div>
+                    <button class="star-btn" onclick="buyStars('Gold Поиск', 50)"><i class="fa-solid fa-star"></i>50</button>
                 </div>
                 <div class="star-item">
-                    <div class="star-info"><i class="fa-solid fa-crown"></i><span>Full Лимит доступа (Месяц)</span></div>
-                    <button class="star-btn" onclick="buyStars('Full Лимит', 150)"><i class="fa-solid fa-star"></i> 150</button>
+                    <div class="star-info"><i class="fa-solid fa-infinity"></i><span>Безлимитный доступ (30 дней)</span></div>
+                    <button class="star-btn" onclick="buyStars('Full Безлимит', 150)"><i class="fa-solid fa-star"></i>150</button>
                 </div>
             </div>
         </div>
@@ -478,151 +470,190 @@
 
     <div id="tab-requests" class="tab-content">
         <div class="glass-card">
-            <h4 style="margin-bottom: 15px;"><i class="fa-solid fa-clock-rotate-left" style="margin-right: 8px; color: var(--accent-color);"></i> История Ваших запросов</h4>
-            <div class="history-list">
-                <div class="history-item"><span>+79991234567</span><span class="history-date">Сегодня</span></div>
-                <div class="history-item"><span>redoxin42-bit</span><span class="history-date">Вчера</span></div>
-                <div class="history-item"><span>test_user_osint</span><span class="history-date">25.05.2026</span></div>
+            <h4 style="margin-bottom: 15px;"><i class="fa-solid fa-receipt" style="margin-right: 8px; color: var(--accent-color);"></i> История проверок</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="background: rgba(255,255,255,0.02); padding: 14px; border-radius: 14px; border-left: 3px solid var(--accent-color); display: flex; justify-content: space-between;">
+                    <span>+79991234567</span><span style="color: var(--text-muted); font-size: 13px;">Сегодня</span>
+                </div>
+                <div style="background: rgba(255,255,255,0.02); padding: 14px; border-radius: 14px; border-left: 3px solid var(--accent-color); display: flex; justify-content: space-between;">
+                    <span>redoxin42-bit</span><span style="color: var(--text-muted); font-size: 13px;">Вчера</span>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="tab-mirror" class="tab-content">
         <div class="glass-card">
-            <h4 style="margin-bottom: 10px;"><i class="fa-solid fa-clone" style="margin-right: 8px; color: var(--accent-color);"></i> Создать зеркало бота</h4>
-            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Введите токен нового бота от @BotFather. Созданное зеркало унаследует этот же Liquidglass дизайн и базу данных.</p>
+            <h4 style="margin-bottom: 10px;"><i class="fa-solid fa-code-fork" style="margin-right: 8px; color: var(--accent-color);"></i> Развернуть зеркало бота</h4>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Введите новый токен от @BotFather. Система автоматически скопирует вашу конфигурацию и этот интерфейс.</p>
             
             <div class="input-group">
-                <label for="bot-token-input">Токен нового бота:</label>
+                <label>HTTP Token нового бота:</label>
                 <input type="text" id="bot-token-input" class="glass-input" placeholder="1234567890:ABCdefGhIJKlmNoPQRsT...">
             </div>
-            <button class="action-btn" onclick="createMirror()">Запустить зеркало</button>
+            <button class="action-btn" onclick="createMirror()">Создать точную копию</button>
         </div>
     </div>
 
     <div class="exit-container">
-        <button class="action-btn exit-btn" onclick="closeWebApp()"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right: 8px;"></i> Выйти из панели</button>
+        <button class="action-btn exit-btn" onclick="closeWebApp()"><i class="fa-solid fa-power-off" style="margin-right: 8px;"></i> Выйти из панели</button>
     </div>
 
     <nav class="tab-bar">
-        <button class="tab-item active" onclick="switchTab('tab-search', this)"><i class="fa-solid fa-circle-nodes"></i>Исследовать</button>
-        <button class="tab-item" onclick="switchTab('tab-profile', this)"><i class="fa-solid fa-id-card"></i>Профиль</button>
-        <button class="tab-item" onclick="switchTab('tab-requests', this)"><i class="fa-solid fa-chart-pie"></i>Запросы</button>
-        <button class="tab-item" onclick="switchTab('tab-mirror', this)"><i class="fa-solid fa-network-wired"></i>Зеркало</button>
+        <button class="tab-item active" onclick="switchTab('tab-search', this)"><i class="fa-solid fa-cube"></i>Исследовать</button>
+        <button class="tab-item" onclick="switchTab('tab-profile', this)"><i class="fa-solid fa-address-card"></i>Профиль</button>
+        <button class="tab-item" onclick="switchTab('tab-requests', this)"><i class="fa-solid fa-clock-rotate-left"></i>Запросы</button>
+        <button class="tab-item" onclick="switchTab('tab-mirror', this)"><i class="fa-solid fa-shapes"></i>Зеркало</button>
     </nav>
 
     <script>
-        // Инициализация Telegram Web App SDK
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Расширяем окно на весь экран телефона
+        tg.expand();
 
-        // Массив для хранения выбранных OSINT сервисов
-        let selectedServices = ['vk', 'wa', 'tg'];
+        let currentSearchType = 'tg_user';
+        let selectedModules = ['Maigret', 'WhatsApp', 'Dyxless', 'VK', 'Telegram', 'WhatsMyName', 'Maltego'];
 
-        // Динамическое получение данных профиля из Telegram
+        // Сбор данных профиля Телеграм
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            const user = tg.initDataUnsafe.user;
-            document.getElementById('user-name').innerText = (user.first_name + ' ' + (user.last_name || '')).trim();
-            document.getElementById('user-username').innerText = user.username ? '@' + user.username : 'ID: ' + user.id;
-            
-            // Если у юзера есть фото, подтягиваем его (иначе показываем первую букву имени)
-            if (user.photo_url) {
-                document.getElementById('user-avatar').innerHTML = `<img src="${user.photo_url}" class="profile-avatar" style="border:none;">`;
+            const u = tg.initDataUnsafe.user;
+            document.getElementById('user-name').innerText = (u.first_name + ' ' + (u.last_name || '')).trim();
+            document.getElementById('user-username').innerText = u.username ? '@' + u.username : 'ID: ' + u.id;
+            if (u.photo_url) {
+                document.getElementById('user-avatar').innerHTML = `<img src="${u.photo_url}" class="profile-avatar" style="border:none;">`;
             } else {
-                document.getElementById('user-avatar').innerText = user.first_name.charAt(0).toUpperCase();
+                document.getElementById('user-avatar').innerText = u.first_name.charAt(0).toUpperCase();
             }
         } else {
-            // Заглушка, если открыто вне телеграма
             document.getElementById('user-name').innerText = "Redoxin Developer";
             document.getElementById('user-username').innerText = "@redoxin42_bit";
         }
 
-        // Логика переключения вкладок
-        function switchTab(tabId, button) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-item').forEach(item => item.classList.remove('active'));
-            
-            document.getElementById(tabId).classList.add('active');
-            button.classList.add('active');
+        function switchTab(id, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
         }
 
-        // Анимированная смена цветовой гаммы
         function changeTheme(color, pill) {
             document.querySelectorAll('.color-pill').forEach(p => p.classList.remove('active'));
             pill.classList.add('active');
-            
             document.documentElement.style.setProperty('--accent-color', color);
-            // Создаем красивый полупрозрачный цвет для свечения
-            const glowColor = color === '#a855f7' ? 'rgba(168, 85, 247, 0.4)' :
-                              color === '#3b82f6' ? 'rgba(59, 130, 246, 0.4)' :
-                              color === '#06b6d4' ? 'rgba(6, 182, 212, 0.4)' : 'rgba(16, 185, 129, 0.4)';
-            document.documentElement.style.setProperty('--accent-glow', glowColor);
+            const glow = color === '#a855f7' ? 'rgba(168, 85, 247, 0.4)' :
+                         color === '#3b82f6' ? 'rgba(59, 130, 246, 0.4)' :
+                         color === '#06b6d4' ? 'rgba(6, 182, 212, 0.4)' : 'rgba(16, 185, 129, 0.4)';
+            document.documentElement.style.setProperty('--accent-glow', glow);
         }
 
-        // Выбор/снятие выбора сервисов OSINT
-        function toggleService(element, serviceName) {
-            if (selectedServices.includes(serviceName)) {
-                selectedServices = selectedServices.filter(s => s !== serviceName);
-                element.classList.remove('selected');
+        function selectType(type, element) {
+            document.querySelectorAll('.type-card').forEach(c => c.classList.remove('active'));
+            element.classList.add('active');
+            currentSearchType = type;
+        }
+
+        function toggleService(el, name) {
+            if (selectedModules.includes(name)) {
+                selectedModules = selectedModules.filter(m => m !== name);
+                el.classList.remove('selected');
             } else {
-                selectedServices.push(serviceName);
-                element.classList.add('selected');
+                selectedModules.push(name);
+                el.classList.add('selected');
             }
         }
 
-        // ФУНКЦИЯ НАСТОЯЩЕГО ПОИСКА (Отправка данных боту)
+        // ОТРИСОВКА И АНИМАЦИЯ ЦЕПОЧКИ ДАННЫХ OBSIDIAN
         function triggerSearch() {
-            const query = document.getElementById('search-query').value.trim();
-            if (!query) {
-                tg.showAlert("Пожалуйста, введите данные для поиска!");
-                return;
-            }
-            if (selectedServices.length === 0) {
-                tg.showAlert("Выберите хотя бы один сервис для OSINT проверки!");
-                return;
-            }
+            const queryVal = document.getElementById('search-query').value.trim();
+            if (!queryVal) { tg.showAlert("Введите строку запроса для построения Obsidian-цепочки!"); return; }
+            if (selectedModules.length === 0) { tg.showAlert("Выберите хотя бы один модуль OSINT!"); return; }
 
-            // Формируем JSON-пакет данных
-            const data = {
-                action: "search",
-                query: query,
-                services: selectedServices
-            };
+            // Прячем ввод, выводим Obsidian холст
+            document.getElementById('search-inputs-card').style.display = 'none';
+            const graphContainer = document.getElementById('obsidian-graph');
+            graphContainer.style.display = 'flex';
 
-            // Отправляем пакет данных нашему Python-боту и закрываем Web App
-            tg.sendData(JSON.stringify(data));
+            // Назначаем центральный узел
+            document.getElementById('center-node-element').innerText = queryVal;
+
+            // Генерируем дочерние узлы модулей
+            const childContainer = document.getElementById('child-nodes-container');
+            childContainer.innerHTML = '';
+            selectedModules.forEach(mod => {
+                childContainer.innerHTML += `<div class="node node-child" id="node-${mod}"><i class="fa-solid fa-network-wired"></i>${mod}</div>`;
+            });
+
+            // Даем DOM-структуре отрисоваться перед расчетом SVG-линий связей
+            setTimeout(() => {
+                buildObsidianLinks();
+                
+                // Имитация прохода волны по графу
+                selectedModules.forEach((mod, index) => {
+                    setTimeout(() => {
+                        const el = document.getElementById(`node-${mod}`);
+                        if(el) el.classList.add('active-scan');
+                    }, index * 250);
+                });
+
+                // Спустя 3.5 сек, когда цепочка завершит прогон, отгружаем пакет данных боту в Термукс
+                setTimeout(() => {
+                    const dataPackage = {
+                        action: "search",
+                        query: queryVal,
+                        type: currentSearchType,
+                        modules: selectedModules
+                    };
+                    tg.sendData(JSON.stringify(dataPackage));
+                }, 3500);
+
+            }, 50);
         }
 
-        // ФУНКЦИЯ СОЗДАНИЯ ЗЕРКАЛА
+        function buildObsidianLinks() {
+            const svg = document.getElementById('graph-svg-canvas');
+            const centerEl = document.getElementById('center-node-element');
+            svg.innerHTML = '';
+
+            const centerRect = centerEl.getBoundingClientRect();
+            const containerRect = document.getElementById('obsidian-graph').getBoundingClientRect();
+
+            const cX = (centerRect.left + centerRect.width / 2) - containerRect.left;
+            const cY = (centerRect.top + centerRect.height / 2) - containerRect.top;
+
+            selectedModules.forEach(mod => {
+                const childEl = document.getElementById(`node-${mod}`);
+                if (!childEl) return;
+                
+                const childRect = childEl.getBoundingClientRect();
+                const childX = (childRect.left + childRect.width / 2) - containerRect.left;
+                const childY = (childRect.top + childRect.height / 2) - containerRect.top;
+
+                // Базовая статическая связь Obsidian
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", cX); line.setAttribute("y1", cY);
+                line.setAttribute("x2", childX); line.setAttribute("y2", childY);
+                line.setAttribute("class", "edge-line");
+                svg.appendChild(line);
+
+                // Динамический светящийся импульс пакета
+                const pulse = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                pulse.setAttribute("x1", cX); pulse.setAttribute("y1", cY);
+                pulse.setAttribute("x2", childX); pulse.setAttribute("y2", childY);
+                pulse.setAttribute("class", "pulse-line");
+                svg.appendChild(pulse);
+            });
+        }
+
         function createMirror() {
-            const token = document.getElementById('bot-token-input').value.trim();
-            if (!token) {
-                tg.showAlert("Введите валидный Bot Token от BotFather!");
-                return;
-            }
-
-            const data = {
-                action: "create_mirror",
-                token: token
-            };
-
-            tg.sendData(JSON.stringify(data));
+            const tok = document.getElementById('bot-token-input').value.trim();
+            if (!tok) { tg.showAlert("Укажите токен!"); return; }
+            tg.sendData(JSON.stringify({ action: "create_mirror", token: tok }));
         }
 
-        // ФУНКЦИЯ ПОКУПКИ ЗА ЗВЕЗДЫ
-        function buyStars(itemName, price) {
-            const data = {
-                action: "buy_stars",
-                item: itemName,
-                price: price
-            };
-            tg.sendData(JSON.stringify(data));
+        function buyStars(name, price) {
+            tg.sendData(JSON.stringify({ action: "buy_stars", item: name, cost: price }));
         }
 
-        // Функция закрытия Web App по кнопке Выйти
-        function closeWebApp() {
-            tg.close();
-        }
+        function closeWebApp() { tg.close(); }
     </script>
 </body>
-</html>
+    </html>
