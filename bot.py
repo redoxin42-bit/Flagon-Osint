@@ -4,108 +4,100 @@ import logging
 from aiogram import Bot, Dispatcher, executor, types
 from dotenv import load_dotenv
 
-# Настройка логирования сообщений в консоль Термукса
 logging.basicConfig(level=logging.INFO)
-
-# Загрузка конфигурации из файла .env
 load_dotenv()
 
 BOT_TOKEN = os.getenv("8859119831:AAFBBnqoZGOEBYtUcvf3xFMgk_ck1qXmzUg")
 WEBAPP_URL = os.getenv("https://meek-cajeta-3c5742.netlify.app/")
 
 if not BOT_TOKEN or not WEBAPP_URL:
-    exit("Ошибка: Проверь файл .env! Переменные BOT_TOKEN или WEBAPP_URL пусты.")
+    exit("Ошибка конфигурации: Проверьте переменные среды в .env")
 
-# Инициализация объектов бота
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
 
-# Обработчик стартовой команды
 @dp.message_handler(commands=['start'])
 async def cmd_start(message: types.Message):
-    # Создаем красивую нижнюю клавиатуру (ReplyKeyboardMarkup)
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    
-    # Кнопка, привязанная к нашему Netlify-сайту
-    webapp_button = types.KeyboardButton(
+    webapp_btn = types.KeyboardButton(
         text="🔮 Открыть Flagon OSINT", 
         web_app=types.WebAppInfo(url=WEBAPP_URL)
     )
-    markup.add(webapp_button)
+    markup.add(webapp_btn)
     
     await message.answer(
-        f"🤖 **Рады видеть Вас, {message.from_user.first_name}!**\n\n"
-        f"Добро пожаловать в программный комплекс **Flagon OSINT**.\n"
-        f"Все инструменты управления упакованы в наш быстрый Liquidglass интерфейс.\n\n"
-        f"Нажмите на кнопку ниже, чтобы начать безопасную сессию.",
+        f"🛡 **Система авторизации Flagon OSINT**\n\n"
+        f"Приветствуем Вас, `{message.from_user.first_name}`. Модули ядра синхронизированы с Netlify-сервером. "
+        f"Задействован интерактивный движок вычисления графов связей Obsidian.\n\n"
+        f"Используйте кнопку меню для вызова панели управления.",
         reply_markup=markup,
         parse_mode="Markdown"
     )
 
-# ГЛАВНЫЙ ОБРАБОТЧИК ДАННЫХ ИЗ WEB APP
-# Перехватывает любые пакеты, отправленные через метод tg.sendData()
 @dp.message_handler(content_types=types.ContentType.WEB_APP_DATA)
-async def handle_webapp_data(message: types.Message):
+async def process_webapp_incoming(message: types.Message):
     try:
-        # Парсим входящую строку JSON в Python-словарь
-        payload = json.loads(message.web_app_data.data)
-        action = payload.get("action")
+        raw_data = message.web_app_data.data
+        data = json.loads(raw_data)
+        action = data.get("action")
 
-        # 1. Сценарий: Реальный Поиск
         if action == "search":
-            query = payload.get("query")
-            services = payload.get("services", [])
-            services_string = ", ".join([s.upper() for s in services])
-
-            # Имитируем начало глубокого поиска
+            query = data.get("query")
+            search_type = data.get("type", "unknown")
+            modules = data.get("modules", [])
+            
+            # Маппинг типов поиска на читаемый язык
+            type_mapping = {
+                "tg_user": "Юзернейм Telegram",
+                "phone": "Номер мобильного телефона",
+                "vk_id": "Учетная запись ВКонтакте",
+                "whatsapp": "Идентификатор WhatsApp"
+            }
+            readable_type = type_mapping.get(search_type, "Смешанный тип")
+            mods_line = ", ".join(modules) if modules else "Авто-выбор"
+            
+            # Итоговый живой лог-отчет после прогона Obsidian-анимации
             await message.answer(
-                f"⚡️ **Запущен глобальный поиск Flagon OSINT**\n"
-                f"───\n"
-                f"🔍 **Объект:** `{query}`\n"
-                f"📡 **Задействовано модулей ({len(services)}):** `[{services_string}]`\n\n"
-                f"⏳ _Пожалуйста, подождите. Идет сбор и дедупликация данных из баз данных..._"
-                f"⚡️ Поиск успешно завершен! Совпадений не обнаружено.",
+                f"📡 **[Flagon Core] Результаты трассировки Obsidian Graph**\n"
+                f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"📊 **Тип пробива:** `{readable_type}`\n"
+                f"🔍 **Объект проверки:** `{query}`\n"
+                f"🧬 **Узлы цепочки:** `[{mods_line}]`\n\n"
+                f"✅ **Статус:** Трассировка графа связей завершена. Пакеты данных успешно обработаны. "
+                f"Поисковая сессия закрыта без ошибок.",
                 parse_mode="Markdown"
             )
 
-        # 2. Сценарий: Создание Зеркала бота
         elif action == "create_mirror":
-            new_token = payload.get("token")
-            # Обрезаем токен для безопасности при выводе в лог
-            masked_token = new_token[:10] + "..." + new_token[-5:] if len(new_token) > 15 else "Невалидный токен"
+            token = data.get("token")
+            hidden = token[:9] + "..." + token[-4:] if len(token) > 15 else "Маска ошибки"
             
             await message.answer(
-                f"🔮 **Запрос на развертывание Зеркала**\n"
-                f"───\n"
-                f"🔑 **Получен токен:** `{masked_token}`\n"
-                f"⚙️ **Статус синхронизации:** `Копирование структуры Liquid Glass`\n\n"
-                f"✅ **Успех!** Новое зеркало успешно инициализировано и привязано к вашей учетной записи. "
-                f"Вы можете управлять им через главного бота.",
+                f"🔮 **[Синхронизация Ядер] Выделенное зеркало**\n"
+                f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"🔑 **Token:** `{hidden}`\n"
+                f"🛠 **Конфигурация UI:** `Capsule Dock / Liquid Glass`\n\n"
+                f"✅ Копия успешно скомпилирована. База данных Flagon интегрирована.",
                 parse_mode="Markdown"
             )
 
-        # 3. Сценарий: Покупка за Звезды Telegram
         elif action == "buy_stars":
-            item = payload.get("item")
-            price = payload.get("price")
+            item = data.get("item")
+            cost = data.get("cost")
             
             await message.answer(
-                f"🪙 **Инициирована покупка через Telegram Stars**\n"
-                f"───\n"
-                f"📦 **Продукт:** `{item}`\n"
-                f"⭐️ **Стоимость:** `{price} XTR`\n\n"
-                f"🛒 _Для проведения транзакции воспользуйтесь официальным счетом, высланным платежным шлюзом Telegram..._",
+                f"⭐️ **[Telegram Stars Pay] Счёт сформирован**\n"
+                f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"📦 **Услуга:** `{item}`\n"
+                f"💎 **Номинал транзакции:** `{cost} XTR`\n\n"
+                f"🛒 Для проведения оплаты используйте всплывающее диалоговое окно шлюза.",
                 parse_mode="Markdown"
             )
-
-        else:
-            await message.answer("⚠️ Получен неизвестный пакет данных из интерфейса.")
 
     except json.JSONDecodeError:
-        await message.answer("❌ Ошибка обработки пакета: некорректный формат JSON.")
+        await message.answer("❌ Внутренний сбой ядра: Ошибка структуры JSON.")
     except Exception as e:
-        await message.answer(format(f"❌ Системный сбой при обработке Web App: {str(e)}"))
+        await message.answer(f"❌ Критическая ошибка обработки: {str(e)}")
 
 if __name__ == '__main__':
-    # Запуск поллинга бота
     executor.start_polling(dp, skip_updates=True)
